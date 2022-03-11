@@ -153,50 +153,7 @@ const ModalForm = () => {
                             <div className='col-12'>
                                 <label>Address</label>
                             </div>
-                            <div className='col-12 col-sm-3'>
-                                <div className='form-group'>
-                                    <select
-                                        name='country'
-                                        id='country'
-                                        className='form-control'
-                                    >
-                                        <option value=''>Quốc Gia</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className='col-12 col-sm-3'>
-                                <div className='form-group'>
-                                    <select
-                                        name='city'
-                                        id='city'
-                                        className='form-control'
-                                    >
-                                        <option value=''>Thành Phố</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className='col-12 col-sm-3'>
-                                <div className='form-group'>
-                                    <select
-                                        name='district'
-                                        id='district'
-                                        className='form-control'
-                                    >
-                                        <option value=''>Quận/Huyện</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className='col-12 col-sm-3'>
-                                <div className='form-group'>
-                                    <select
-                                        name='ward'
-                                        id='ward'
-                                        className='form-control'
-                                    >
-                                        <option value=''>Phường/Xã</option>
-                                    </select>
-                                </div>
-                            </div>
+
                             <div className='col-12'>
                                 <div className='form-group'>
                                     <input
@@ -205,16 +162,6 @@ const ModalForm = () => {
                                         id='address'
                                         placeholder='Address'
                                     />
-                                </div>
-                            </div>
-                            <div className='col-12'>
-                                <div className='form-group'>
-                                    <label>Note</label>
-                                    <textarea
-                                        className='form-control'
-                                        id='note'
-                                        rows='3'
-                                    ></textarea>
                                 </div>
                             </div>
                         </div>

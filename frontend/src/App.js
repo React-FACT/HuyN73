@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Login from './components/login/Login';
-import Dashboard from './components/dashboard/Dashboard';
+import ListUser from './components/ListUser/ListUser';
 
 const App = () => {
     return (
@@ -11,8 +11,8 @@ const App = () => {
                     <Login />
                 </Route>
 
-                <Route path='/dashboard'>
-                    <Dashboard />
+                <Route path='/list-user'>
+                    <ListUser />
                 </Route>
             </Switch>
         </Router>
