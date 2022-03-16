@@ -1,21 +1,22 @@
 import {
-    FETCH_USER,
-    UPDATE_USER,
-    DELETE_USER,
+    GET_USER_SUCCESSFULLY,
+    CREATE_USER_SUCCESSFULLY,
+    UPDATE_USER_SUCCESSFULLY,
+    DELETE_USER_SUCCESSFULLY,
 } from '../../constants/redux.constants';
 
 const initialState = [];
 
 const user = (state = initialState, { type, payload }) => {
     switch (type) {
-        case FETCH_USER:
-            return payload;
-        case DELETE_USER:
-            return state.filter((user) => user.id !== payload);
-        case UPDATE_USER:
-            return state.map((user) =>
-                user.id === payload.id ? { ...user, ...payload } : user
-            );
+        case GET_USER_SUCCESSFULLY:
+            return { ...state, data: payload };
+        case CREATE_USER_SUCCESSFULLY:
+            return { data: [...state.data, payload] };
+        case UPDATE_USER_SUCCESSFULLY:
+            return { ...state, payload };
+        case DELETE_USER_SUCCESSFULLY:
+            return { data: state.data.filter((user) => user.id !== payload) };
         default:
             break;
     }

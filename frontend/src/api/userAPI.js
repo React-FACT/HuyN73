@@ -4,7 +4,7 @@ import { baseURI } from '../constants/api.constants';
 
 const url = baseURI + 'user';
 
-const fetchUsers = async () => {
+const getUser = async () => {
     try {
         const { data } = await axios.get(`${url}/get-all`);
         return data;
@@ -40,6 +40,6 @@ const deleteUser = async (id) => {
     }
 };
 
-const userAPI = { fetchUsers, createUser, deleteUser, updateUser };
+const userAPI = { getUser, createUser, deleteUser, updateUser };
 
 export default userAPI;

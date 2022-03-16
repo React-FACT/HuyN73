@@ -1,47 +1,70 @@
 import {
-    FETCH_USER,
-    DELETE_USER,
+    GET_USER,
+    GET_USER_SUCCESSFULLY,
+    CREATE_USER,
+    CREATE_USER_SUCCESSFULLY,
     UPDATE_USER,
+    UPDATE_USER_SUCCESSFULLY,
+    DELETE_USER,
+    DELETE_USER_SUCCESSFULLY,
 } from '../../constants/redux.constants';
-import userAPI from '../../api/userAPI';
 
-export const fetchUsers = () => async (dispatch) => {
-    const { errorCode, results } = await userAPI.fetchUsers();
-    if (errorCode === 200) {
-        dispatch({
-            type: FETCH_USER,
-            payload: results,
-        });
-    }
-};
+const userActions = {
+    getUser() {
+        return {
+            type: GET_USER,
+        };
+    },
 
-export const createUser = (body) => async (dispatch) => {
-    const { errorCode } = await userAPI.createUser(body);
-    const { results } = await userAPI.fetchUsers();
-    if (errorCode === 200) {
-        dispatch({
-            type: FETCH_USER,
-            payload: results,
-        });
-    }
-};
+    createUser(user) {
+        return {
+            type: CREATE_USER,
+            user,
+        };
+    },
 
-export const updateUsers = (id, body) => async (dispatch) => {
-    const { errorCode, results } = await userAPI.updateUser(id, body);
-    if (errorCode === 200) {
-        dispatch({
+    updateUsers(id, user) {
+        return {
             type: UPDATE_USER,
-            payload: results,
-        });
-    }
+            id,
+            user,
+        };
+    },
+
+    deleteUser(id) {
+        return {
+            type: DELETE_USER,
+            id,
+        };
+    },
+
+    getUserSuccessfully(payload) {
+        return {
+            type: GET_USER_SUCCESSFULLY,
+            payload,
+        };
+    },
+
+    createUserSuccessfully(payload) {
+        return {
+            type: CREATE_USER_SUCCESSFULLY,
+            payload,
+        };
+    },
+
+    updateUserSuccessfully(payload) {
+        return {
+            type: UPDATE_USER_SUCCESSFULLY,
+            payload,
+        };
+    },
+
+    deleteUserSuccessfully(payload) {
+        return {
+            type: DELETE_USER_SUCCESSFULLY,
+            payload,
+        };
+    },
 };
 
-export const deleteUser = (id) => async (dispatch) => {
-    const { results } = await userAPI.deleteUser(id);
-    if (results === 1) {
-        dispatch({
-            type: DELETE_USER,
-            payload: id,
-        });
-    }
-};
+export default userActions;

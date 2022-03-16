@@ -2,29 +2,121 @@ import React, { useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './modal.css';
+import { useFormik } from 'formik';
+import { useDispatch } from 'react-redux';
+import userActions from '../../redux/actions/userAction';
 
-const ModalForm = () => {
+const initForm = {
+    username: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    address: '',
+    note: '',
+    role: '2',
+    status: '0',
+};
+
+const initMessage = {
+    username: '',
+    password: '',
+    email: '',
+    lastName: '',
+};
+
+const ModalForm = ({ userEdit, modalEditUser }) => {
     const [show, setShow] = useState(false);
+    const [onEdit, setOnEdit] = useState(false);
 
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleClose = () => {
+        setErrorMessage(initMessage);
+        setShow(false);
+    };
+    const handleShow = () => {
+        setShow(true);
+    };
+
+    const [errorMessage, setErrorMessage] = useState(initMessage);
+
+    // Redux
+    const dispatch = useDispatch();
+
+    const formik = useFormik({
+        initialValues: initForm,
+        onSubmit: (values, { resetForm }) => {
+            handleSubmitForm(values);
+            resetForm(initForm);
+        },
+    });
+
+    // Function
+    const handleInputBlur = ({ target }) => {
+        showErrorMessage(target.name);
+    };
+
+    const handleSubmitForm = (values) => {
+        if (!validateForm()) {
+            return;
+        }
+
+        let data = {
+            username: values.username,
+            password: values.password,
+            email: values.email,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            note: values.note,
+            address: values.address,
+            role: values.role,
+            status: values.status,
+        };
+
+        onEdit === false
+            ? dispatch(userActions.createUser(data))
+            : dispatch(userActions.updateUsers('1', data));
+        handleClose();
+    };
+
+    const validateForm = () => {
+        let isValid = true;
+        let newErrorMessage = { ...initMessage };
+        Object.keys(errorMessage).forEach((i) => {
+            if (formik.values[i] === '') {
+                newErrorMessage[i] = i + ' is required';
+                isValid = false;
+            }
+        });
+        setErrorMessage(newErrorMessage);
+        return isValid;
+    };
+
+    const showErrorMessage = (name) => {
+        formik.values[name] === ''
+            ? setErrorMessage({
+                  ...errorMessage,
+                  [name]: `${name} is required`,
+              })
+            : setErrorMessage({ ...errorMessage, [name]: '' });
+    };
 
     return (
         <>
             <button
                 type='button'
                 className='btn-custom btn-add-user'
-                onClick={handleShow}
+                onClick={() => handleShow()}
             >
                 Add User
             </button>
 
             <Modal show={show} onHide={handleClose} centered size='lg'>
-                <Modal.Header closeButton>
-                    <h5 className='modal-title'>ADD NEW USER</h5>
-                </Modal.Header>
-                <Modal.Body>
-                    <form>
+                <form onSubmit={formik.handleSubmit}>
+                    <Modal.Header closeButton>
+                        <h5 className='modal-title'>ADD NEW USER</h5>
+                    </Modal.Header>
+                    <Modal.Body>
                         <div className='row'>
                             <div className='col-12 col-sm-6'>
                                 <div id='user-field' className='form-group'>
@@ -32,9 +124,15 @@ const ModalForm = () => {
                                     <input
                                         type='text'
                                         className='form-control'
-                                        id='username'
                                         placeholder='Username'
+                                        name='username'
+                                        value={formik.values.username}
+                                        onBlur={handleInputBlur}
+                                        onChange={formik.handleChange}
                                     />
+                                    <div className='error-message'>
+                                        {errorMessage.username}
+                                    </div>
                                 </div>
                             </div>
                             <div className='col-12 col-sm-6'>
@@ -43,9 +141,15 @@ const ModalForm = () => {
                                     <input
                                         type='password'
                                         className='form-control'
-                                        id='password'
                                         placeholder='Password'
+                                        name='password'
+                                        value={formik.values.password}
+                                        onBlur={handleInputBlur}
+                                        onChange={formik.handleChange}
                                     />
+                                    <div className='error-message'>
+                                        {errorMessage.password}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -61,22 +165,30 @@ const ModalForm = () => {
                                     <input
                                         type='text'
                                         className='form-control'
-                                        id='firstName'
                                         placeholder='First name'
+                                        name='firstName'
+                                        value={formik.values.firstName}
+                                        onChange={formik.handleChange}
                                     />
                                 </div>
                             </div>
                             <div className='col-12 col-sm-6'>
-                                <div id='lastname-field' className='form-group'>
+                                <div id='lastName-field' className='form-group'>
                                     <label className='required'>
                                         Last name
                                     </label>
                                     <input
                                         type='text'
                                         className='form-control'
-                                        id='lastName'
                                         placeholder='Last name'
+                                        name='lastName'
+                                        value={formik.values.lastName}
+                                        onBlur={handleInputBlur}
+                                        onChange={formik.handleChange}
                                     />
+                                    <div className='error-message'>
+                                        {errorMessage.lastName}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -85,14 +197,13 @@ const ModalForm = () => {
                                 <div className='form-group'>
                                     <label>Role</label>
                                     <select
-                                        name='role'
-                                        id='role'
                                         className='form-control'
+                                        name='role'
+                                        value={formik.values.role}
+                                        onChange={formik.handleChange}
                                     >
-                                        <option value='Administrator'>
-                                            Administrator
-                                        </option>
-                                        <option value='User'>User</option>
+                                        <option value='2'>User</option>
+                                        <option value='1'>Administrator</option>
                                     </select>
                                 </div>
                             </div>
@@ -100,14 +211,13 @@ const ModalForm = () => {
                                 <div className='form-group'>
                                     <label>Status</label>
                                     <select
-                                        name='status'
-                                        id='status'
                                         className='form-control'
+                                        name='status'
+                                        value={formik.values.status}
+                                        onChange={formik.handleChange}
                                     >
-                                        <option value='Active'>Active</option>
-                                        <option value='Unactive'>
-                                            Unactive
-                                        </option>
+                                        <option value='0'>Active</option>
+                                        <option value='1'>Unactive</option>
                                     </select>
                                 </div>
                             </div>
@@ -119,9 +229,15 @@ const ModalForm = () => {
                                     <input
                                         type='email'
                                         className='form-control'
-                                        id='email'
                                         placeholder='Email'
+                                        name='email'
+                                        value={formik.values.email}
+                                        onBlur={handleInputBlur}
+                                        onChange={formik.handleChange}
                                     />
+                                    <div className='error-message'>
+                                        {errorMessage.email}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -131,7 +247,7 @@ const ModalForm = () => {
                                 <div className='row phone'>
                                     <div className='col-6 col-sm-2'>
                                         <select
-                                            name='phone'
+                                            name='areaCode'
                                             id='areaCode'
                                             className='form-control area-code'
                                         >
@@ -142,8 +258,10 @@ const ModalForm = () => {
                                         <input
                                             type='text'
                                             className='form-control phone-number'
-                                            id='phoneNumber'
                                             placeholder='Phone number'
+                                            name='phone'
+                                            value={formik.values.phone}
+                                            onChange={formik.handleChange}
                                         />
                                     </div>
                                 </div>
@@ -159,26 +277,39 @@ const ModalForm = () => {
                                     <input
                                         type='text'
                                         className='form-control'
-                                        id='address'
                                         placeholder='Address'
+                                        name='address'
+                                        value={formik.values.address}
+                                        onChange={formik.handleChange}
                                     />
                                 </div>
                             </div>
+                            <div className='col-12'>
+                                <div className='form-group'>
+                                    <label>Note</label>
+                                    <textarea
+                                        className='form-control'
+                                        name='note'
+                                        value={formik.values.note}
+                                        onChange={formik.handleChange}
+                                    ></textarea>
+                                </div>
+                            </div>
                         </div>
-                    </form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button
-                        type='button'
-                        className='btn btn-secondary closeBtn'
-                        onClick={handleClose}
-                    >
-                        CANCEL
-                    </button>
-                    <button type='button' className='btn btn-submit'>
-                        ADD
-                    </button>
-                </Modal.Footer>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <button
+                            type='button'
+                            className='btn btn-secondary closeBtn'
+                            onClick={handleClose}
+                        >
+                            CANCEL
+                        </button>
+                        <button type='submit' className='btn btn-submit'>
+                            ADD
+                        </button>
+                    </Modal.Footer>
+                </form>
             </Modal>
         </>
     );

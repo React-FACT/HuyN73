@@ -2,28 +2,34 @@ import React, { useState, useEffect } from 'react';
 import ModalForm from '../modal/ModalForm';
 import './listUser.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUsers } from '../../redux/actions/userAction';
 import RowUser from '../RowUser/RowUser';
+import userActions from '../../redux/actions/userAction';
 
 const ListUser = () => {
     const listUser = useSelector((state) => state.user);
     const dispatch = useDispatch();
 
+    const [userEdit, setUserEdit] = useState({});
+
     // Effect
     useEffect(() => {
-        dispatch(fetchUsers());
+        dispatch(userActions.getUser());
     }, [dispatch]);
+
+    const onEditUser = (user) => {
+        setUserEdit(user);
+    };
 
     return (
         <>
             <div className='table-container'>
                 <div className='table-wrap'>
                     <h1 className='title mb-4'>List User</h1>
-                    <ModalForm />
+                    <ModalForm userEdit={userEdit} />
                     <table className='table-user'>
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>STT</th>
                                 <th>Username</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
@@ -35,8 +41,15 @@ const ListUser = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {listUser.map((user, index) => {
-                                return <RowUser key={index} user={user} />;
+                            {listUser?.data?.map((user, index) => {
+                                return (
+                                    <RowUser
+                                        key={index}
+                                        index={index}
+                                        user={user}
+                                        onEditUser={onEditUser}
+                                    />
+                                );
                             })}
                         </tbody>
                     </table>
