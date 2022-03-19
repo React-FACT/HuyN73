@@ -10,14 +10,25 @@ const ListUser = () => {
     const dispatch = useDispatch();
 
     const [userEdit, setUserEdit] = useState({});
+    const [show, setShow] = useState(false);
 
     // Effect
     useEffect(() => {
         dispatch(userActions.getUser());
     }, [dispatch]);
 
+    const onShowAddUser = () => {
+        setUserEdit(null);
+        setShow(true);
+    };
+
+    const onHide = () => {
+        setShow(false);
+    };
+
     const onEditUser = (user) => {
         setUserEdit(user);
+        setShow(true);
     };
 
     return (
@@ -25,7 +36,18 @@ const ListUser = () => {
             <div className='table-container'>
                 <div className='table-wrap'>
                     <h1 className='title mb-4'>List User</h1>
-                    <ModalForm userEdit={userEdit} />
+                    <button
+                        type='button'
+                        className='btn-custom btn-add-user'
+                        onClick={() => onShowAddUser()}
+                    >
+                        Add User
+                    </button>
+                    <ModalForm
+                        userEdit={userEdit}
+                        show={show}
+                        onHide={onHide}
+                    />
                     <table className='table-user'>
                         <thead>
                             <tr>
@@ -44,10 +66,11 @@ const ListUser = () => {
                             {listUser?.data?.map((user, index) => {
                                 return (
                                     <RowUser
-                                        key={index}
-                                        index={index}
+                                        key={user.id}
                                         user={user}
+                                        index={index}
                                         onEditUser={onEditUser}
+                                        onShowAddUser={onShowAddUser}
                                     />
                                 );
                             })}

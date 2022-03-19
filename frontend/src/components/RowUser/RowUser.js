@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import userActions from '../../redux/actions/userAction';
 
-const RowUser = ({ user, index, onEditUser, modalEditUser }) => {
+const RowUser = ({ user, index, onEditUser }) => {
     // Redux
     const dispatch = useDispatch();
 

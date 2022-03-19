@@ -27,7 +27,7 @@ function* createUser({ user }) {
 function* updateUser({ id, user }) {
     const { errorCode, results } = yield call(userAPI.updateUser, id, user);
     if (errorCode === statusCode.success) {
-        yield put(userActions.updateUsersSuccessfully(results));
+        yield put(userActions.updateUserSuccessfully(results));
     }
 }
 

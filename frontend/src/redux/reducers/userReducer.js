@@ -14,7 +14,11 @@ const user = (state = initialState, { type, payload }) => {
         case CREATE_USER_SUCCESSFULLY:
             return { data: [...state.data, payload] };
         case UPDATE_USER_SUCCESSFULLY:
-            return { ...state, payload };
+            return {
+                data: state.data.map((user) =>
+                    user.id === payload.id ? payload : user
+                ),
+            };
         case DELETE_USER_SUCCESSFULLY:
             return { data: state.data.filter((user) => user.id !== payload) };
         default:

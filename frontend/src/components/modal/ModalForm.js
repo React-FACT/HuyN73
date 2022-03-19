@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './modal.css';
@@ -26,34 +26,49 @@ const initMessage = {
     lastName: '',
 };
 
-const ModalForm = ({ userEdit, modalEditUser }) => {
-    const [show, setShow] = useState(false);
+const ModalForm = ({ userEdit, show, onHide }) => {
+    // State
     const [onEdit, setOnEdit] = useState(false);
 
     const handleClose = () => {
         setErrorMessage(initMessage);
-        setShow(false);
+        onHide();
     };
-    const handleShow = () => {
-        setShow(true);
-    };
-
-    const [errorMessage, setErrorMessage] = useState(initMessage);
 
     // Redux
     const dispatch = useDispatch();
 
     const formik = useFormik({
-        initialValues: initForm,
+        // initialValues: {
+        //     username: userEdit?.username ? userEdit.username : '',
+        //     password: userEdit?.password ? userEdit.password : '',
+        //     firstName: userEdit?.firstName ? userEdit.firstName : '',
+        //     lastName: userEdit?.lastName ? userEdit.lastName : '',
+        //     email: userEdit?.email ? userEdit.email : '',
+        //     phone: userEdit?.phoneNumber ? userEdit.phoneNumber : '',
+        //     address: userEdit?.address ? userEdit.address : '',
+        //     note: userEdit?.note ? userEdit.note : '',
+        //     role: userEdit?.role ? userEdit.role : '2',
+        //     status: userEdit?.status ? userEdit.status : '0',
+        // },
+        initialValues: userEdit ? { ...userEdit } : { ...initForm },
+        enableReinitialize: true,
         onSubmit: (values, { resetForm }) => {
             handleSubmitForm(values);
             resetForm(initForm);
         },
     });
+    // Effect
+    useEffect(() => {
+        setOnEdit(userEdit ? true : false);
+    }, [userEdit, setOnEdit]);
+
+    const [errorMessage, setErrorMessage] = useState(initMessage);
 
     // Function
     const handleInputBlur = ({ target }) => {
         showErrorMessage(target.name);
+        console.log(onEdit);
     };
 
     const handleSubmitForm = (values) => {
@@ -72,10 +87,11 @@ const ModalForm = ({ userEdit, modalEditUser }) => {
             role: values.role,
             status: values.status,
         };
-
+        console.log(data);
         onEdit === false
             ? dispatch(userActions.createUser(data))
-            : dispatch(userActions.updateUsers('1', data));
+            : dispatch(userActions.updateUsers(userEdit.id, data));
+
         handleClose();
     };
 
@@ -103,16 +119,11 @@ const ModalForm = ({ userEdit, modalEditUser }) => {
 
     return (
         <>
-            <button
-                type='button'
-                className='btn-custom btn-add-user'
-                onClick={() => handleShow()}
-            >
-                Add User
-            </button>
-
             <Modal show={show} onHide={handleClose} centered size='lg'>
-                <form onSubmit={formik.handleSubmit}>
+                <form
+                    enableReinitialize={userEdit}
+                    onSubmit={formik.handleSubmit}
+                >
                     <Modal.Header closeButton>
                         <h5 className='modal-title'>ADD NEW USER</h5>
                     </Modal.Header>
